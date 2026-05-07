@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brief de diseño_Rappi Travel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgBase: '#f1f5f9',
+                        bgSlide: '#ffffff',
+                        borderSoft: '#e2e8f0',
+                        textMain: '#0f172a',
+                        textSecondary: '#475569',
+                        textTertiary: '#64748b',
+                        rappiAccent: '#FF441F',
+                        bgSoft: '#f8fafc',
+                    },
+                    fontFamily: {
+                        poppins: ['Poppins', 'sans-serif'],
+                        lato: ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Lato', sans-serif; }
+        h1, h2, h3, h4, .font-poppins { font-family: 'Poppins', sans-serif; }
+        /* Custom radio button styles for priority */
+        .priority-btn.active-alta { background-color: #FF441F; color: white; border-color: #FF441F; }
+        .priority-btn.active-media { background-color: #f59e0b; color: white; border-color: #f59e0b; }
+        .priority-btn.active-baja { background-color: #10b981; color: white; border-color: #10b981; }
+        /* Textarea resizing */
+        textarea { resize: vertical; }
+    </style>
+</head>
+<body class="bg-bgBase text-textMain min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-6">
+
+        <div class="bg-bgSlide border border-borderSoft rounded-[4px] p-4 flex gap-4 items-center shadow-sm">
+            <label class="text-sm font-poppins font-semibold text-textSecondary whitespace-nowrap">Buscar Brief:</label>
+            <input type="text" placeholder="Ej. #0012" class="w-full md:w-64 px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent text-sm">
+            <button class="bg-textMain hover:bg-[#1e293b] text-white px-4 py-2 rounded font-poppins text-sm transition-colors">Buscar / Editar</button>
+        </div>
+
+        <div class="bg-bgSlide border border-borderSoft rounded-[4px] shadow-sm overflow-hidden">
+            
+            <a href="#" class="block w-full h-[200px] bg-bgSoft border-b border-borderSoft relative group">
+                <img src="https://lh3.googleusercontent.com/d/1dnZRhTrCNjjQ1R57wcS35U3jvHf2UExz" alt="Header Brief" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center transition-all">
+                    <span class="text-white font-poppins font-semibold">Cambiar Imagen</span>
+                </div>
+            </a>
+
+            <div class="p-8 md:p-12">
+                
+                <div class="mb-8 border-b-2 border-borderSoft pb-4 flex justify-between items-end flex-wrap gap-4">
+                    <div>
+                        <h1 class="text-4xl font-poppins font-extrabold text-textMain tracking-tight">
+                            Brief de diseño <span class="text-rappiAccent">Rappi</span> Travel
+                        </h1>
+                    </div>
+                    <div class="bg-rappiAccent text-white px-4 py-1.5 rounded-full text-sm font-poppins font-semibold tracking-wide">
+                        ID: <span id="displayId">#0000</span>
+                    </div>
+                </div>
+
+                <form id="briefForm" onsubmit="enviarPorCorreo(event)" class="space-y-8 text-[15px] text-textSecondary">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-bgSoft p-6 rounded-[12px] border border-borderSoft">
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">1. Estado</label>
+                            <select id="estado" class="w-full px-4 py-2.5 border border-borderSoft rounded bg-bgSlide focus:outline-none focus:border-rappiAccent text-textMain">
+                                <option>Nuevo</option>
+                                <option>En Proceso</option>
+                                <option>En Revisión</option>
+                                <option>Esperando Assets</option>
+                                <option>Finalizado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">2. Prioridad</label>
+                            <div class="flex gap-2" id="priority-container">
+                                <button type="button" onclick="setPriority('alta', this)" class="priority-btn flex-1 py-2 border border-borderSoft rounded bg-bgSlide font-semibold transition-colors">ALTA</button>
+                                <button type="button" onclick="setPriority('media', this)" class="priority-btn flex-1 py-2 border border-borderSoft rounded bg-bgSlide font-semibold transition-colors">Media</button>
+                                <button type="button" onclick="setPriority('baja', this)" class="priority-btn flex-1 py-2 border border-borderSoft rounded bg-bgSlide font-semibold transition-colors">Baja</button>
+                                <input type="hidden" id="prioridad" value="No especificada">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2 text-sm">3. Fecha Requerimiento</label>
+                            <input type="date" id="fechaReq" class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent">
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2 text-sm">4. Fecha Entrega Diseño</label>
+                            <input type="date" id="fechaEnt" class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent">
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2 text-sm">5. Vigencia Campaña</label>
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1">
+                                    <span class="text-xs text-textTertiary block mb-1">Desde</span>
+                                    <input type="date" id="vigenciaDesde" class="w-full px-2 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent text-sm">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-textTertiary block mb-1">Hasta</span>
+                                    <input type="date" id="vigenciaHasta" class="w-full px-2 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">6. Responsable (Solicitante)</label>
+                            <textarea id="responsable" rows="1" placeholder="Nombre completo" class="w-full px-3 py-2.5 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">7. País</label>
+                            <select id="pais" class="w-full px-3 py-2.5 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent">
+                                <option>Colombia (CO)</option>
+                                <option>México (ME)</option>
+                                <option>Perú (PE)</option>
+                                <option>Chile (CL)</option>
+                                <option>Argentina (AR)</option>
+                                <option>Brasil (BR)</option>
+                                <option>Loyalty</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">8. Proyecto / Pieza o Campaña</label>
+                            <textarea id="proyecto" rows="2" placeholder="Descripción del proyecto..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">9. Objetivo</label>
+                            <textarea id="objetivo" rows="3" placeholder="Breve descripción..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">10. Deals</label>
+                            <textarea id="deals" rows="3" placeholder="Descuentos, ofertas..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">11. Cliente (Enfoque de comunicación)</label>
+                            <p class="text-[13px] text-textTertiary mb-2">Rappi Travel, Partnership, PRO, PROBLACK, RappiCard. Si es multimarca, especificar ¿Quién habla?</p>
+                            <textarea id="cliente" rows="3" class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">12. Piezas</label>
+                            <textarea id="piezas" rows="3" placeholder="Ej: 1 Banner InApp, 2 Posts RRSS..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-poppins font-semibold text-textMain mb-2">13. Logos</label>
+                            <textarea id="logos" rows="2" placeholder="Sellos o logos de aliados requeridos..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="bg-bgSoft p-6 rounded-[12px] border border-borderSoft">
+                        <label class="block font-poppins font-semibold text-textMain mb-2">14. Assets</label>
+                        <p class="text-[13px] text-textTertiary mb-3">Espacio para poner links, carpetas de drive o adjuntar archivos directos.</p>
+                        
+                        <div class="flex flex-col gap-4">
+                            <textarea id="assets" rows="2" placeholder="Pega aquí tus links (Drive, Dropbox, etc)..." class="w-full px-3 py-2 border border-borderSoft rounded bg-bgSlide focus:outline-none focus:border-rappiAccent"></textarea>
+                            
+                            <div class="flex items-center gap-4">
+                                <input type="file" id="fileInput" class="hidden" multiple>
+                                <button type="button" onclick="document.getElementById('fileInput').click()" class="bg-textMain hover:bg-[#1e293b] text-white px-6 py-2.5 rounded font-poppins text-sm transition-colors whitespace-nowrap">
+                                    📁 Adjuntar Archivos
+                                </button>
+                                <span id="file-chosen" class="text-sm text-textSecondary">Ningún archivo seleccionado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t-2 border-borderSoft pt-6">
+                        <label class="block font-poppins font-semibold text-textMain mb-2 text-lg">15. Términos y Condiciones</label>
+                        <p class="text-[13px] text-textTertiary mb-4">Especifique texto completo y links. Seleccione una base para modificar:</p>
+                        
+                        <select id="tcSelector" onchange="insertTC()" class="w-full px-3 py-2.5 mb-4 border border-borderSoft rounded bg-bgSoft focus:outline-none focus:border-rappiAccent font-medium text-textMain">
+                            <option value="">-- Seleccionar Plantilla --</option>
+                            <option value="Aplican términos y condiciones. Válido para Colombia para usuarios Rappi Pro y Rappi ProBlack que reserven vuelos, hoteles, paquetes, tours o alquilen auto en Rappi Travel del 22 de abril al 3 mayo de 2026. https://promos.rappi.com/colombia/rappipro.">1. PRO (Colombia)</option>
+                            <option value="Aplican términos y condiciones: Válido en Rappi Travel Perú. Del 04 al 10 de mayo de 2026 en productos, fechas y destinos seleccionados. https://travel.rappi.com.pe/terms">2. GENÉRICOS (Perú)</option>
+                            <option value="Aplican términos y condiciones: Válido en Rappi Travel Colombia. Del 13 al 30 de abril de 2026. Aplica para usuarios que reserven vuelos o paquetes internacionales en Rappi Travel y sumen la asistencia con Universal Assistance en el flujo. https://promos.rappi.com/colombia/2026-descuentosenasistenciasdeviaje">3. ASISTENCIA DE VIAJE (Colombia)</option>
+                            <option value="Aplican términos y condiciones. Válido en Rappi Travel Perú. Vuelos sin cargo de servicio no incluyen impuestos ni tasas administrativas de tiquetes aéreos. https://promos.rappi.com/peru/rappitravel-sincargo. Exclusivo para usuarios Rappi Pro y Rappi ProBlack.">4. VUELOS (Perú)</option>
+                        </select>
+                        <textarea id="tcTextarea" rows="5" class="w-full px-4 py-3 border border-borderSoft rounded bg-bgSlide focus:outline-none focus:border-rappiAccent leading-relaxed"></textarea>
+                    </div>
+
+                    <div class="pt-6 flex justify-end">
+                        <button type="submit" class="bg-rappiAccent hover:bg-[#e03816] text-white px-8 py-3 rounded-[8px] font-poppins font-semibold shadow-sm transition-all text-lg">
+                            Enviar Brief
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Manejo de botones de prioridad
+        function setPriority(level, btnElement) {
+            document.getElementById('prioridad').value = level.toUpperCase();
+            const buttons = document.querySelectorAll('.priority-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active-alta', 'active-media', 'active-baja');
+            });
+            btnElement.classList.add(`active-${level}`);
+        }
+
+        // Manejo de autollenado de T&C
+        function insertTC() {
+            const selector = document.getElementById('tcSelector');
+            const textarea = document.getElementById('tcTextarea');
+            if (selector.value) {
+                textarea.value = selector.value;
+                selector.value = ""; // Vuelve al estado neutral tras insertar
+            }
+        }
+
+        // Manejo de nombre del archivo adjunto
+        document.getElementById('fileInput').addEventListener('change', function(){
+            const fileChosen = document.getElementById('file-chosen');
+            if(this.files.length > 1) {
+                fileChosen.textContent = this.files.length + " archivos seleccionados";
+            } else if(this.files.length === 1) {
+                fileChosen.textContent = this.files[0].name;
+            } else {
+                fileChosen.textContent = "Ningún archivo seleccionado";
+            }
+        });
+
+        // Función para enviar por correo al hacer clic en "Enviar Brief"
+        function enviarPorCorreo(event) {
+            event.preventDefault(); // Evita que la página se recargue
+
+            // Recopilar datos
+            const proyecto = document.getElementById('proyecto').value || "Nuevo Proyecto";
+            const estado = document.getElementById('estado').value;
+            const prioridad = document.getElementById('prioridad').value;
+            const fechaReq = document.getElementById('fechaReq').value;
+            const fechaEnt = document.getElementById('fechaEnt').value;
+            const vDesde = document.getElementById('vigenciaDesde').value;
+            const vHasta = document.getElementById('vigenciaHasta').value;
+            const responsable = document.getElementById('responsable').value;
+            const pais = document.getElementById('pais').value;
+            const objetivo = document.getElementById('objetivo').value;
+            const deals = document.getElementById('deals').value;
+            const cliente = document.getElementById('cliente').value;
+            const piezas = document.getElementById('piezas').value;
+            const logos = document.getElementById('logos').value;
+            const assets = document.getElementById('assets').value;
+            const tc = document.getElementById('tcTextarea').value;
+
+            // Formatear el cuerpo del correo
+            let cuerpoCorreo = `📝 NUEVO BRIEF DE DISEÑO: ${proyecto.toUpperCase()}\n\n`;
+            cuerpoCorreo += `1. ESTADO: ${estado}\n`;
+            cuerpoCorreo += `2. PRIORIDAD: ${prioridad}\n`;
+            cuerpoCorreo += `3. FECHA REQUERIMIENTO: ${fechaReq}\n`;
+            cuerpoCorreo += `4. FECHA ENTREGA: ${fechaEnt}\n`;
+            cuerpoCorreo += `5. VIGENCIA: Desde ${vDesde} hasta ${vHasta}\n`;
+            cuerpoCorreo += `6. RESPONSABLE: ${responsable}\n`;
+            cuerpoCorreo += `7. PAÍS: ${pais}\n`;
+            cuerpoCorreo += `8. PROYECTO/CAMPAÑA: ${proyecto}\n\n`;
+            cuerpoCorreo += `9. OBJETIVO:\n${objetivo}\n\n`;
+            cuerpoCorreo += `10. DEALS:\n${deals}\n\n`;
+            cuerpoCorreo += `11. CLIENTE:\n${cliente}\n\n`;
+            cuerpoCorreo += `12. PIEZAS:\n${piezas}\n\n`;
+            cuerpoCorreo += `13. LOGOS:\n${logos}\n\n`;
+            cuerpoCorreo += `14. ASSETS (Links):\n${assets}\n\n`;
+            cuerpoCorreo += `15. TÉRMINOS Y CONDICIONES:\n${tc}\n`;
+
+            // Construir el enlace mailto
+            const correoDestino = "julieth.leguizamon@rappi.com";
+            const asunto = encodeURIComponent(`Nuevo Brief de Diseño - ${proyecto}`);
+            const cuerpo = encodeURIComponent(cuerpoCorreo);
+            
+            const mailtoLink = `mailto:${correoDestino}?subject=${asunto}&body=${cuerpo}`;
+
+            // Abrir el cliente de correo
+            window.location.href = mailtoLink;
+        }
+    </script>
+</body>
+</html>
